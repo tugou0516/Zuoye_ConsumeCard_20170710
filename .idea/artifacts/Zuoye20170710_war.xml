@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Zuoye20170710:war">
+    <output-path>$PROJECT_DIR$/Zuoye20170710/target</output-path>
+    <root id="archive" name="Zuoye20170710-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="Zuoye20170710:war exploded" />
+    </root>
+  </artifact>
+</component>

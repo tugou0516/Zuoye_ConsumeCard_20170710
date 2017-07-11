@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CardList_Zuoye20170710</title>
+    <link rel="stylesheet" href="../css/bootstrap.css"/>
+    <link rel="stylesheet" href="../css/jquery-ui.css"/>
+    <style type="text/css">
+        .action-btn {
+            margin-top: 50px;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+<button id="add-btn" type="button" class="btn btn-warning action-btn">添加会员卡</button>
+<a id="export-btn" href="export.do" class="btn btn-warning action-btn">导出会员卡</a>
+<div class="container">
+    <div id="search-div" class="row">
+        <div class="col-lg-6">
+            <form id="search-form">
+                <input name="customerName" placeholder="输入顾客姓名关键字">
+                <button id="search-btn" type="button">查询</button>
+            </form>
+        </div>
+        <div class="col-lg-6 text-right">
+            <form id="upload-form" class="form-inline">
+                <input id="excel-file" class="form-control" name="excelFile" type="file" />
+                <button type="button" id="upload-btn">上传会员卡</button>
+            </form>
+        </div>
+    </div>
+    <div id="list-div">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>卡名</th>
+                    <th>剩余次数</th>
+                    <th>总次数</th>
+                    <th>余额</th>
+                    <th>总金额</th>
+                    <th>持卡顾客</th>
+                    <th>注册时间</th>
+                    <th>顾客信息</th>
+                    <th>消费记录</th>
+                    <th>消费</th>
+                </tr>
+            </thead>
+            <tbody id="tb01">
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="text-right" colspan="11">
+                        <button id="first-page-btn" type="button">首页</button>
+                        <button id="former-page-btn" type="button">上一页</button>
+                        <span id="page-span"></span>
+                        <button id="next-page-btn" type="button">下一页</button>
+                        <button id="last-page-btn" type="button">尾页</button>
+                        <span>跳转页码：
+                        <input id="pageNo" name="pageNo" value="1" form="search-form"/>
+                    </span>
+                        <span>每页显示数量：
+                        <select id="pageSize" name="pageSize" form="search-form">
+                            <option value="5" selected>5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
+                    </span>
+                        <button id="go-btn" type="button">GO</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div id="save-dialog" title="添加会员卡">
+    <form id="form01">
+        <div class="form-group">
+            <select class="form-control" id="cardName" name="cardName">
+                <option value="白金卡">白金卡</option>
+                <option value="金卡">金卡</option>
+                <option value="银卡">银卡</option>
+                <option value="铜卡">铜卡</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="countAll" name="countAll" placeholder="次数"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="price" name="price" placeholder="金额"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="customerName" name="customerName" placeholder="顾客姓名"/>
+        </div>
+        <div class="form-group">
+            <select class="form-control" id="customerGender" name="customerGender">
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="customerTel" name="customerTel" placeholder="顾客电话"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="customerBirthday" name="customerBirthday" placeholder="顾客生日" type="date"/>
+        </div>
+    </form>
+</div>
+<div id="consume-dialog" title="会员卡消费">
+    <form id="form02">
+        <div class="form-group">
+            <h4></h4>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="countLes" name="countLes" placeholder="本次消费次数"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="sum" name="sum" placeholder="本次消费金额"/>
+        </div>
+        <div class="form-group">
+            <select class="form-control" id="project" name="project">
+                <option value="普通理发">普通理发</option>
+                <option value="精剪">精剪</option>
+                <option value="染发">染发</option>
+                <option value="烫发">烫发</option>
+                <option value="护理">护理</option>
+                <option value="造型设计">造型设计</option>
+            </select>
+        </div>
+    </form>
+</div>
+<div id="cusInfo-dialog" class="container" title="顾客信息">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>电话</th>
+            <th>生日</th>
+        </tr>
+        </thead>
+        <tbody id="tb02">
+
+        </tbody>
+    </table>
+</div>
+<div id="consumeHis-dialog" class="container" title="消费记录">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>消费流水号</th>
+                <th>会员卡ID</th>
+                <th>消费次数</th>
+                <th>消费金额</th>
+                <th>消费项目</th>
+                <th>消费时间</th>
+            </tr>
+        </thead>
+        <tbody id="tb03">
+
+        </tbody>
+    </table>
+</div>
+<div id="hidden-customerInfo" hidden>
+    <table>
+
+    </table>
+</div>
+<script src="../js/jquery-3.2.1.js"></script>
+<script src="../js/bootstrap.js"></script>
+<script src="../js/jquery-ui.js"></script>
+<script src="../js/sha1.js"></script>
+<script src="../js/commons.js"></script>
+<script>
+    var totalPage = 0;
+    $(function () {
+        showList();
+        $('#add-btn').on('click', function () {
+            saveDialog.dialog('open');
+        });
+        $('#search-btn').add('#go-btn').on('click', showList);
+        $('#first-page-btn').on('click', function () {
+            $('#pageNo').val(1);
+            showList();
+        });
+        $('#last-page-btn').on('click', function () {
+            $('#pageNo').val(totalPage);
+            showList();
+        });
+        $('#former-page-btn').on('click', function () {
+            var input = $('#pageNo');
+            var pageNum = parseInt(input.val()) - 1;
+            if (pageNum > 0) {
+                input.val(pageNum);
+            }
+            showList();
+        });
+        $('#next-page-btn').on('click', function () {
+            var input = $('#pageNo');
+            var pageNum = parseInt(input.val()) + 1;
+            if (pageNum <= totalPage) {
+                input.val(pageNum);
+            }
+            showList();
+        });
+    });
+    $('#tb01','#cusInfo-btn').on('click',function () {
+        cusInfoDialog.dialog('open');
+        showCusInfo();
+    });
+    $('#tb01','#consumeHis-btn').on('click',function () {
+        var cardId = $(this).data('info');
+        $.ajax({
+            url:"consumeHis.do?cardId="+cardId,
+            type:"GET"
+        }).then(function (ch4S) {
+            ch4S.forEach(function (element,index,ch4S) {
+                $('#tb03').append(
+                    "<tr><td>" + element.id +
+                    "</td><td>" + element.cardId +
+                    "</td><td>" + element.countLes +
+                    "</td><td>" + element.sum +
+                    "</td><td>" + element.project +
+                    "</td><td>" + element.consumeTimeStr +
+                    "</td></tr>"
+                );
+            });
+            consumeHisDialog.dialog('open');
+        },function (xhr, status, errorMsg) {
+            alert(xhr.status);
+            alert(errorMsg);
+        });
+    });
+    $('#tb01','#consume-btn').on('click',function () {
+        consumeDialog.dialog('open');
+    });
+    var saveDialog = $('#save-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 550,
+        width: 400,
+        buttons: [
+            {
+                text: "保存",
+                click: function () {
+                    var dataJson = $('#form01').form2Json();
+                    $.ajax({
+                        url: "save.do",
+                        type: "POST",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: dataJson
+                    }).then(function (msg) {
+                        alert(msg.msg);
+                        $('#form01')[0].reset();
+                        $('#save-dialog').dialog('close');
+                        $('#search-form')[0].reset();
+                        $('#tb01').empty();
+                        showList();
+                    }, function (jqXhr, status, errorMsg) {
+                        alert(msg.msg);
+                    });
+                }
+            },
+            {
+                text: "关闭",
+                click: function () {
+                    $('#form01')[0].reset();
+                    $('#save-dialog').dialog('close');
+                }
+            }
+        ]
+    });
+    var cusInfoDialog = $('#cusInfo-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 550,
+        width: 400,
+        buttons:[
+            {
+                text:"确定",
+                click:function () {
+                    $('#cusInfo-dialog').dialog('close');
+                    $('#tb02').empty();
+                }
+            }
+        ]
+    });
+    var consumeHisDialog = $('#consumeHis-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 550,
+        width: 400,
+        buttons:[
+            {
+                text:"确定",
+                click:function () {
+                    $('#consumeHis-dialog').dialog('close');
+                    $('#tb03').empty();
+                }
+            }
+        ]
+    });
+    var consumeDialog = $('#consume-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 550,
+        width: 400,
+        buttons: [
+            {
+                text: "保存",
+                click: function () {
+                    var dataJson = $('#form02').form2Json();
+                    $.ajax({
+                        url: "consume.do",
+                        type: "POST",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: dataJson
+                    }).then(function (msg) {
+                        alert(msg.msg);
+                        $('#form02')[0].reset();
+                        $('#consume-dialog').dialog('close');
+                        $('#search-form')[0].reset();
+                        showList();
+                    }, function (jqXhr, status, errorMsg) {
+                        alert(msg.msg);
+                    });
+                }
+            },
+            {
+                text: "关闭",
+                click: function () {
+                    $('#form02')[0].reset();
+                    $('#consume-dialog').dialog('close');
+                }
+            }
+        ]
+    });
+    var showCusInfo = function () {
+        var id = $(this).data('info');
+        var cusIds = $('#hidden-customerInfo','.hidden-customerId');
+        cusIds.forEach(function (cusId,index,cusIds) {
+            if((cusId.text()).equalTo(id)){
+                $('#tb02').append(
+                    "<tr><td>"+ id +
+                    "</td><td>" + cusId.parent().children()[1].text() +
+                    "</td><td>" + cusId.parent().children()[2].text() +
+                    "</td><td>" + cusId.parent().children()[3].text() +
+                    "</td><td>" + cusId.parent().children()[4].text() +
+                    "</td></tr>"
+                );
+            }
+        });
+    };
+    var showList = function () {
+        var formJson = $('#search-form').form2Json();
+        $('#tb01').empty();
+        $.ajax({
+            url: 'list.do',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: formJson
+        }).then(function (ro) {
+            if (ro.emptyData) {
+                alert("未查询到符合条件的数据");
+                $('tfoot').hide();
+            } else {
+                $('tfoot').show();
+                $.each(ro.list, function (index, card) {
+                    $('#tb01').append(
+                        "<tr><td>"+ card.id +
+                        "</td><td>" + card.cardName +
+                        "</td><td>" + card.countLes +
+                        "</td><td>" + card.countAll +
+                        "</td><td>" + card.balance +
+                        "</td><td>" + card.price +
+                        "</td><td>" + card.customerName +
+                        "</td><td>" + card.registTimeStr +
+                        "</td><td class='cardStatus' data-status='"+card.status+"'>" + card.status +
+                        "</td><td>" + "<button id='cusInfo-btn' class='btn' type='button' data-info='"+card.id+"'>顾客信息</button>" +
+                        "</td><td>" + "<button id='consumeHis-btn' class='btn' type='button' data-info='"+card.id+"'>消费记录</button>" +
+                        "</td><td>" + "<button id='consume-btn' class='btn btn-warning' type='button'>消费</button>" +
+                        "</td></tr>"
+                    );
+                    $('#hidden-customerInfo','table').append(
+                        "<tr><td class='hidden-customerId'>"+ card.customerId +
+                        "</td><td>" + card.customerName +
+                        "</td><td>" + card.customerGender +
+                        "</td><td>" + card.customerTel +
+                        "</td><td>" + card.customerBirthdayStr +
+                        "</td></tr>"
+                    );
+                });
+                totalPage = ro.page.totalPage;
+                $('#page-span').text("第" + ro.page.pageNo + "/" + ro.page.totalPage + "页  第" + (ro.page.firstResultNum + 1) + "~" + ro.page.lastResultNum + "/" + ro.page.totalQuantity + "条");
+            }
+        }, function (xhr, status, errorMsg) {
+            alert(xhr.status);
+            alert(errorMsg);
+        });
+    }
+</script>
+</body>
+</html>
