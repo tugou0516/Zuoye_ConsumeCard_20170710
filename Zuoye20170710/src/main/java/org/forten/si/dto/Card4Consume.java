@@ -6,16 +6,16 @@ package org.forten.si.dto;
 public class Card4Consume {
     private int cardId;
     private int countNum;
-    private int sum;
+    private int price;
     private String project;
 
     public Card4Consume() {
     }
 
-    public Card4Consume(int cardId, int countNum, int sum, String project) {
+    public Card4Consume(int cardId, int countNum, int price, String project) {
         this.cardId = cardId;
         this.countNum = countNum;
-        this.sum = sum;
+        this.price = price;
         this.project = project;
     }
 
@@ -35,12 +35,12 @@ public class Card4Consume {
         this.countNum = countNum;
     }
 
-    public int getSum() {
-        return sum;
+    public int getPrice() {
+        return price;
     }
 
-    public void setSum(int sum) {
-        this.sum = sum;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public String getProject() {
@@ -60,7 +60,7 @@ public class Card4Consume {
 
         if (cardId != that.cardId) return false;
         if (countNum != that.countNum) return false;
-        if (sum != that.sum) return false;
+        if (price != that.price) return false;
         return project != null ? project.equals(that.project) : that.project == null;
     }
 
@@ -68,7 +68,7 @@ public class Card4Consume {
     public int hashCode() {
         int result = cardId;
         result = 31 * result + countNum;
-        result = 31 * result + sum;
+        result = 31 * result + price;
         result = 31 * result + (project != null ? project.hashCode() : 0);
         return result;
     }
@@ -78,7 +78,7 @@ public class Card4Consume {
         return "Card4Consume{" +
                 "cardId=" + cardId +
                 ", countNum=" + countNum +
-                ", sum=" + sum +
+                ", price=" + price +
                 ", project='" + project + '\'' +
                 '}';
     }

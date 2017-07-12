@@ -42,6 +42,7 @@
                     <th>总金额</th>
                     <th>持卡顾客</th>
                     <th>注册时间</th>
+                    <th>状态</th>
                     <th>顾客信息</th>
                     <th>消费记录</th>
                     <th>消费</th>
@@ -75,7 +76,13 @@
         </table>
     </div>
 </div>
+<div hidden="hidden">
+    <table>
+        <tbody id="hidden-customerInfo">
 
+        </tbody>
+    </table>
+</div>
 <div id="save-dialog" title="添加会员卡">
     <form id="form01">
         <div class="form-group">
@@ -90,7 +97,7 @@
             <input class="form-control" id="countAll" name="countAll" placeholder="次数"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="price" name="price" placeholder="金额"/>
+            <input class="form-control" id="form01-price" name="price" placeholder="金额"/>
         </div>
         <div class="form-group">
             <input class="form-control" id="customerName" name="customerName" placeholder="顾客姓名"/>
@@ -112,13 +119,13 @@
 <div id="consume-dialog" title="会员卡消费">
     <form id="form02">
         <div class="form-group">
-            <h4></h4>
+            <input class="form-control" id="form02-cardId" name="cardId" disabled="disabled"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="countLes" name="countLes" placeholder="本次消费次数"/>
+            <input class="form-control" id="countLes" name="countNum" placeholder="本次消费次数"/>
         </div>
         <div class="form-group">
-            <input class="form-control" id="sum" name="sum" placeholder="本次消费金额"/>
+            <input class="form-control" id="form02-price" name="price" placeholder="本次消费金额"/>
         </div>
         <div class="form-group">
             <select class="form-control" id="project" name="project">
@@ -165,11 +172,7 @@
         </tbody>
     </table>
 </div>
-<div id="hidden-customerInfo" hidden>
-    <table>
 
-    </table>
-</div>
 <script src="../js/jquery-3.2.1.js"></script>
 <script src="../js/bootstrap.js"></script>
 <script src="../js/jquery-ui.js"></script>
@@ -208,11 +211,24 @@
             showList();
         });
     });
-    $('#tb01','#cusInfo-btn').on('click',function () {
+    $('#tb01').on('click','#cusInfo-btn',function () {
+        var id = $(this).data("info");
+        var cusIds = $('.hidden-customerId');
+        cusIds.each(function (index,element) {
+            if($(element).text()==id){
+                $('#tb02').append(
+                    "<tr><td>"+ id +
+                    "</td><td>" + $(element).nextAll().get(1).text() +
+                    "</td><td>" + $(element).nextAll().get(2).text() +
+                    "</td><td>" + $(element).nextAll().get(3).text() +
+                    "</td><td>" + $(element).nextAll().get(4).text() +
+                    "</td></tr>"
+                );
+            }
+        });
         cusInfoDialog.dialog('open');
-        showCusInfo();
     });
-    $('#tb01','#consumeHis-btn').on('click',function () {
+    $('#tb01').on('click','#consumeHis-btn',function () {
         var cardId = $(this).data('info');
         $.ajax({
             url:"consumeHis.do?cardId="+cardId,
@@ -222,8 +238,8 @@
                 $('#tb03').append(
                     "<tr><td>" + element.id +
                     "</td><td>" + element.cardId +
-                    "</td><td>" + element.countLes +
-                    "</td><td>" + element.sum +
+                    "</td><td>" + element.countNum +
+                    "</td><td>" + element.price +
                     "</td><td>" + element.project +
                     "</td><td>" + element.consumeTimeStr +
                     "</td></tr>"
@@ -231,11 +247,12 @@
             });
             consumeHisDialog.dialog('open');
         },function (xhr, status, errorMsg) {
-            alert(xhr.status);
-            alert(errorMsg);
+            alert(xhr.status+"：数据获取失败");
         });
     });
-    $('#tb01','#consume-btn').on('click',function () {
+    $('#tb01').on('click','#consume-btn',function () {
+        var cardId = $(this).data('info');
+        $('#form02-cardId').val(cardId);
         consumeDialog.dialog('open');
     });
     var saveDialog = $('#save-dialog').dialog({
@@ -278,8 +295,8 @@
     var cusInfoDialog = $('#cusInfo-dialog').dialog({
         autoOpen: false,
         modal: true,
-        height: 550,
-        width: 400,
+        height: 500,
+        width: 550,
         buttons:[
             {
                 text:"确定",
@@ -293,8 +310,8 @@
     var consumeHisDialog = $('#consumeHis-dialog').dialog({
         autoOpen: false,
         modal: true,
-        height: 550,
-        width: 400,
+        height: 500,
+        width: 550,
         buttons:[
             {
                 text:"确定",
@@ -308,7 +325,7 @@
     var consumeDialog = $('#consume-dialog').dialog({
         autoOpen: false,
         modal: true,
-        height: 550,
+        height: 350,
         width: 400,
         buttons: [
             {
@@ -341,25 +358,11 @@
             }
         ]
     });
-    var showCusInfo = function () {
-        var id = $(this).data('info');
-        var cusIds = $('#hidden-customerInfo','.hidden-customerId');
-        cusIds.forEach(function (cusId,index,cusIds) {
-            if((cusId.text()).equalTo(id)){
-                $('#tb02').append(
-                    "<tr><td>"+ id +
-                    "</td><td>" + cusId.parent().children()[1].text() +
-                    "</td><td>" + cusId.parent().children()[2].text() +
-                    "</td><td>" + cusId.parent().children()[3].text() +
-                    "</td><td>" + cusId.parent().children()[4].text() +
-                    "</td></tr>"
-                );
-            }
-        });
-    };
+
     var showList = function () {
         var formJson = $('#search-form').form2Json();
         $('#tb01').empty();
+        $('#hidden-customerInfo').empty();
         $.ajax({
             url: 'list.do',
             type: 'POST',
@@ -385,10 +388,10 @@
                         "</td><td class='cardStatus' data-status='"+card.status+"'>" + card.status +
                         "</td><td>" + "<button id='cusInfo-btn' class='btn' type='button' data-info='"+card.id+"'>顾客信息</button>" +
                         "</td><td>" + "<button id='consumeHis-btn' class='btn' type='button' data-info='"+card.id+"'>消费记录</button>" +
-                        "</td><td>" + "<button id='consume-btn' class='btn btn-warning' type='button'>消费</button>" +
+                        "</td><td>" + "<button id='consume-btn' class='btn btn-warning' type='button' data-info='"+card.id+"'>消费</button>" +
                         "</td></tr>"
                     );
-                    $('#hidden-customerInfo','table').append(
+                    $('#hidden-customerInfo').append(
                         "<tr><td class='hidden-customerId'>"+ card.customerId +
                         "</td><td>" + card.customerName +
                         "</td><td>" + card.customerGender +
@@ -407,4 +410,3 @@
     }
 </script>
 </body>
-</html>

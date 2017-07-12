@@ -40,21 +40,10 @@ public class Card {
     private String status;
 
     public Card() {
-    }
-
-    public Card(int id, String cardName, int countLes, int countAll, int balance, int price, int customerId, String customerName, String customerGender, String customerTel, Date customerBirthday, Date registTime, String status) {
-        this.id = id;
-        this.cardName = cardName;
-        this.countLes = countAll;
-        this.countAll = countAll;
-        this.balance = price;
-        this.price = price;
-        this.customerId = id;
-        this.customerName = customerName;
-        this.customerGender = customerGender;
-        this.customerTel = customerTel;
-        this.customerBirthday = customerBirthday;
-        this.registTime = registTime;
+        this.countLes = this.countAll;
+        this.balance = this.price;
+        this.customerId = this.id;
+        this.registTime = new Date();
         this.status = "初始";
     }
 

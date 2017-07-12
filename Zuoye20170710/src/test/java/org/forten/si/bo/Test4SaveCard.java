@@ -1,4 +1,4 @@
-package java;
+package org.forten.si.bo;
 
 import org.forten.si.bo.CardBo;
 import org.forten.si.dto.Card4Save;

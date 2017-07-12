@@ -42,7 +42,7 @@ public class CardAction {
     }
 
     @RequestMapping("consumeHis")
-    public @ResponseBody List<ConsumeHis4Show> getConsumeHistory(@RequestBody int cardId){
+    public @ResponseBody List<ConsumeHis4Show> getConsumeHistory(int cardId){
         return bo.doGetConsumeHis(cardId);
     }
 }

@@ -19,7 +19,7 @@ public class ConsumeHistory {
     @Column
     private int countNum;
     @Column
-    private int sum;
+    private int price;
     @Column
     private String project;
     @Column
@@ -28,11 +28,11 @@ public class ConsumeHistory {
     public ConsumeHistory() {
     }
 
-    public ConsumeHistory(int id, int cardId, int countNum, int sum, String project, Date consumeTime) {
+    public ConsumeHistory(int id, int cardId, int countNum, int price, String project, Date consumeTime) {
         this.id = id;
         this.cardId = cardId;
         this.countNum = countNum;
-        this.sum = sum;
+        this.price = price;
         this.project = project;
         this.consumeTime = consumeTime;
     }
@@ -61,12 +61,12 @@ public class ConsumeHistory {
         this.countNum = countNum;
     }
 
-    public int getSum() {
-        return sum;
+    public int getPrice() {
+        return price;
     }
 
-    public void setSum(int sum) {
-        this.sum = sum;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public String getProject() {
@@ -106,7 +106,7 @@ public class ConsumeHistory {
                 "id=" + id +
                 ", cardId=" + cardId +
                 ", countNum=" + countNum +
-                ", sum=" + sum +
+                ", price=" + price +
                 ", project='" + project + '\'' +
                 ", consumeTime=" + consumeTime +
                 '}';

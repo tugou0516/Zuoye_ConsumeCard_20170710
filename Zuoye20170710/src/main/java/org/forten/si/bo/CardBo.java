@@ -27,6 +27,8 @@ public class CardBo {
     public void doSave(Card4Save card4S){
         Card card = new Card();
         BeanPropertyUtil.copy(card,card4S);
+        card.setCountLes(card.getCountAll());
+        card.setBalance(card.getPrice());
         dao.save(card);
     }
 
@@ -57,8 +59,10 @@ public class CardBo {
         Card card = dao.getById(card4C.getCardId(),Card.class);
         String hql = "UPDATE Card SET countLes=:countLes, balance=:balance WHERE id=:id ";
         Map<String,Object> map = new HashMap<>();
-        map.put("countLes",card.getCountLes()-card4C.getCountNum());
-        map.put("balance",card.getBalance()-card4C.getSum());
+        int a = card.getCountLes()-card4C.getCountNum();
+        int b = card.getBalance()-card4C.getPrice();
+        map.put("countLes",a);
+        map.put("balance",b);
         map.put("id",card4C.getCardId());
         try{
             dao.executeUpdate(hql,map);
@@ -74,7 +78,7 @@ public class CardBo {
 
     @Transactional
     public List<ConsumeHis4Show> doGetConsumeHis(int cardId){
-        String hql = "SELECT new org.forten.si.dto.ConsumeHis4Show FROM ConsumeHistory WHERE cardId=:cardId ";
+        String hql = "SELECT new org.forten.si.dto.ConsumeHis4Show(id,cardId,countNum,price,project,consumeTime) FROM ConsumeHistory WHERE cardId=:cardId ";
         Map<String,Object> map = new HashMap<>();
         map.put("cardId",cardId);
         List<ConsumeHis4Show> list = dao.findBy(hql,map);
