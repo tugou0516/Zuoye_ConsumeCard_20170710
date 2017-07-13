@@ -59,10 +59,8 @@ public class CardBo {
         Card card = dao.getById(card4C.getCardId(),Card.class);
         String hql = "UPDATE Card SET countLes=:countLes, balance=:balance WHERE id=:id ";
         Map<String,Object> map = new HashMap<>();
-        int a = card.getCountLes()-card4C.getCountNum();
-        int b = card.getBalance()-card4C.getPrice();
-        map.put("countLes",a);
-        map.put("balance",b);
+        map.put("countLes",card.getCountLes()-card4C.getCountNum());
+        map.put("balance",card.getBalance()-card4C.getPrice());
         map.put("id",card4C.getCardId());
         try{
             dao.executeUpdate(hql,map);
@@ -83,6 +81,21 @@ public class CardBo {
         map.put("cardId",cardId);
         List<ConsumeHis4Show> list = dao.findBy(hql,map);
         return list;
+    }
+
+    @Transactional
+    public Message doChangeStatus(int id, String status){
+        String hql = "UPDATE Card SET status=:status WHERE id=:id ";
+        Map<String,Object> map = new HashMap<>();
+        map.put("status",status);
+        map.put("id",id);
+        try{
+            dao.executeUpdate(hql,map);
+            return new Message("状态修改成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Message("状态修改失败");
+        }
     }
 
 }

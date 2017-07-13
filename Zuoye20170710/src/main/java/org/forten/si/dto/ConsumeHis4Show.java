@@ -27,7 +27,7 @@ public class ConsumeHis4Show {
         this.consumeTime = consumeTime;
     }
     public String getConsumeTimeStr(){
-        return DateUtil.convertDateToString(consumeTime,"yyyy-MM-dd");
+        return DateUtil.convertDateToString(consumeTime,"yyyy-MM-dd HH:mm:ss");
     }
 
     public int getId() {

@@ -119,7 +119,8 @@
 <div id="consume-dialog" title="会员卡消费">
     <form id="form02">
         <div class="form-group">
-            <input class="form-control" id="form02-cardId" name="cardId" disabled="disabled"/>
+            <label>卡号：</label>
+            <input class="form-control" id="form02-cardId" name="cardId" readonly="readonly"/>
         </div>
         <div class="form-group">
             <input class="form-control" id="countLes" name="countNum" placeholder="本次消费次数"/>
@@ -210,6 +211,54 @@
             }
             showList();
         });
+    });
+    var oldStatusVal = "";
+    var oldStatusText = "";
+    $('#tb01').on('dblclick','.cardStatus',function () {
+        var statusValue = $(this).data('status');
+        var str = $(this).text();
+        $(this).html(
+            "<select id='slct' name='status'>" +
+            "<option value='初始'>初始</option>" +
+            "<option value='激活'>激活</option>" +
+            "<option value='停卡'>停卡</option>" +
+            "</select>"
+        );
+        $('#slct').val(statusValue);
+        oldStatusVal = statusValue;
+        oldStatusText = str;
+    });
+
+    $('#tb01').on('blur','.cardStatus',function () {
+        var status = $('#slct').val();
+        var str = $('#slct>option:selected').text();
+        if(oldStatusVal!="初始" && status=="初始"){
+            alert("会员卡不可改回初始状态！");
+            return;
+        }
+        if(oldStatusVal==status){
+            $(this).html(oldStatusText);
+        }else {
+            var confirmChangeStatus = function confirmCS(){
+                return confirm("确定将状态由“"+oldStatusText+"”改为“"+str+"”？");
+            };
+            //TODO confirm确认框没出来
+            if(confirmChangeStatus){
+                $(this).html(str);
+                $(this).data('status',status);
+                var id = parseInt($(this).parent().children('td').first().text());
+                $.ajax({
+                    url:"changeStatus.do?id="+id+"&status="+status,
+                    type:"GET"
+                }).then(function (msg) {
+                    alert(msg.msg);
+                },function (xhr,status,errorMsg) {
+                    alert(xhr.status+"：修改失败！");
+                });
+            }else {
+                $(this).html(oldStatusText);
+            }
+        }
     });
     $('#tb01').on('click','#cusInfo-btn',function () {
         var id = $(this).data("info");

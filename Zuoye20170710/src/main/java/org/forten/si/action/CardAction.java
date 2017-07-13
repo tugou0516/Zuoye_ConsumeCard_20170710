@@ -45,4 +45,9 @@ public class CardAction {
     public @ResponseBody List<ConsumeHis4Show> getConsumeHistory(int cardId){
         return bo.doGetConsumeHis(cardId);
     }
+
+    @RequestMapping("changeStatus")
+    public @ResponseBody Message changeCardStatus(int id,String status){
+        return bo.doChangeStatus(id,status);
+    }
 }
