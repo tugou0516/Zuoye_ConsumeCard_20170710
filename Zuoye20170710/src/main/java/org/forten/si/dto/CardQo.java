@@ -5,13 +5,23 @@ package org.forten.si.dto;
  */
 public class CardQo {
     private String customerName;
+    private String customerTel;
     private int pageNo;
     private int pageSize;
 
     public CardQo() {
         this.customerName = "";
+        this.customerTel = "";
         this.pageNo = 1;
         this.pageSize = 2;
+    }
+
+    public String getCustomerTel() {
+        return customerTel;
+    }
+
+    public void setCustomerTel(String customerTel) {
+        this.customerTel = customerTel;
     }
 
     public String getCustomerName() {
@@ -42,6 +52,7 @@ public class CardQo {
     public String toString() {
         return "CardQo{" +
                 "customerName='" + customerName + '\'' +
+                ", customerTel='" + customerTel + '\'' +
                 ", pageNo=" + pageNo +
                 ", pageSize=" + pageSize +
                 '}';

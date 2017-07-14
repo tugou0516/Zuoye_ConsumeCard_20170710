@@ -20,6 +20,7 @@
         <div class="col-lg-6">
             <form id="search-form">
                 <input name="customerName" placeholder="输入顾客姓名关键字">
+                <input name="customerTel" placeholder="输入顾客手机号">
                 <button id="search-btn" type="button">查询</button>
             </form>
         </div>
@@ -46,6 +47,7 @@
                     <th>顾客信息</th>
                     <th>消费记录</th>
                     <th>消费</th>
+                    <th>续卡</th>
                 </tr>
             </thead>
             <tbody id="tb01">
@@ -173,6 +175,49 @@
         </tbody>
     </table>
 </div>
+<div id="changeCusInfo-dialog" class="container" title="修改顾客信息">
+    <form id="form03">
+        <div class="form-group">
+            <label>ID：</label>
+            <input class="form-control" id="form03-cardId" name="cardId" readonly="readonly"/>
+        </div>
+        <div class="form-group">
+            <label>姓名：</label>
+            <input class="form-control" id="form03-name" name="customerName" disabled="disabled"/>
+        </div>
+        <div class="form-group">
+            <label>性别：</label>
+            <select class="form-control" id="form03-gender" name="customerGender">
+                <option value="男">男</option>
+                <option value="女">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>电话：</label>
+            <input class="form-control" id="form03-tel" name="customerTel"/>
+        </div>
+        <div class="form-group">
+            <label>生日：</label>
+            <input class="form-control" id="form03-birthday" name="customerBirthday" type="date"/>
+        </div>
+    </form>
+</div>
+<div id="buyCard-dialog" class="container" title="续卡">
+    <form id="form04">
+        <div class="form-group">
+            <label>ID：</label>
+            <input class="form-control" id="form04-cardId" name="cardId" readonly="readonly"/>
+        </div>
+        <div class="form-group">
+            <label>增添次数：</label>
+            <input class="form-control" id="form04-count" name="buyCount"/>
+        </div>
+        <div class="form-group">
+            <label>增添金额：</label>
+            <input class="form-control" id="form04-price" name="buyPrice"/>
+        </div>
+    </form>
+</div>
 
 <script src="../js/jquery-3.2.1.js"></script>
 <script src="../js/bootstrap.js"></script>
@@ -215,6 +260,10 @@
     var oldStatusVal = "";
     var oldStatusText = "";
     $('#tb01').on('dblclick','.cardStatus',function () {
+        var sts = $('.cardStatus');
+        sts.each(function (index,element){
+            $(element).html($(element).data('status'));
+        });
         var statusValue = $(this).data('status');
         var str = $(this).text();
         $(this).html(
@@ -239,11 +288,7 @@
         if(oldStatusVal==status){
             $(this).html(oldStatusText);
         }else {
-            var confirmChangeStatus = function confirmCS(){
-                return confirm("确定将状态由“"+oldStatusText+"”改为“"+str+"”？");
-            };
-            //TODO confirm确认框没出来
-            if(confirmChangeStatus){
+            if(confirm("确定将状态由“"+oldStatusText+"”改为“"+str+"”？")){
                 $(this).html(str);
                 $(this).data('status',status);
                 var id = parseInt($(this).parent().children('td').first().text());
@@ -267,10 +312,10 @@
             if($(element).text()==id){
                 $('#tb02').append(
                     "<tr><td>"+ id +
-                    "</td><td>" + $(element).nextAll().get(1).text() +
-                    "</td><td>" + $(element).nextAll().get(2).text() +
-                    "</td><td>" + $(element).nextAll().get(3).text() +
-                    "</td><td>" + $(element).nextAll().get(4).text() +
+                    "</td><td>" + $($(element).nextAll().get(0)).text() +
+                    "</td><td>" + $($(element).nextAll().get(1)).text() +
+                    "</td><td>" + $($(element).nextAll().get(2)).text() +
+                    "</td><td>" + $($(element).nextAll().get(3)).text() +
                     "</td></tr>"
                 );
             }
@@ -304,6 +349,12 @@
         $('#form02-cardId').val(cardId);
         consumeDialog.dialog('open');
     });
+    $('#tb01').on('click','#buy-btn',function () {
+        var cardId = $(this).data('info');
+        $('#form04-cardId').val(cardId);
+        buyCardDialog.dialog('open');
+    });
+
     var saveDialog = $('#save-dialog').dialog({
         autoOpen: false,
         modal: true,
@@ -344,11 +395,31 @@
     var cusInfoDialog = $('#cusInfo-dialog').dialog({
         autoOpen: false,
         modal: true,
-        height: 500,
+        height: 350,
         width: 550,
+        close:function () {
+            $('#cusInfo-dialog').dialog('close');
+            $('#tb02').empty();
+        },
         buttons:[
             {
-                text:"确定",
+                text:"修改信息",
+                click:function () {
+                    var id = $($('#tb02').find('td').get(0)).text();
+                    var name = $($('#tb02').find('td').get(1)).text();
+                    var gender = $($('#tb02').find('td').get(2)).text();
+                    var tel = $($('#tb02').find('td').get(3)).text();
+                    var birthday = $($('#tb02').find('td').get(4)).text();
+                    $('#form03-cardId').val(id);
+                    $('#form03-name').val(name);
+                    $('#form03-gender').val(gender);
+                    $('#form03-tel').val(tel);
+                    $('#form03-birthday').val(birthday);
+                    changeCusInfo.dialog('open');
+                }
+            },
+            {
+                text:"关闭",
                 click:function () {
                     $('#cusInfo-dialog').dialog('close');
                     $('#tb02').empty();
@@ -361,6 +432,10 @@
         modal: true,
         height: 500,
         width: 550,
+        close:function () {
+            $('#consumeHis-dialog').dialog('close');
+            $('#tb03').empty();
+        },
         buttons:[
             {
                 text:"确定",
@@ -407,6 +482,86 @@
             }
         ]
     });
+    var changeCusInfo = $('#changeCusInfo-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 350,
+        width: 550,
+        buttons:[
+            {
+                text:"保存",
+                click:function () {
+                    var id = $('#form03-cardId').val();
+                    var gender = $('#form03-gender').val();
+                    var tel = $('#form03-tel').val();
+                    var birthdayStr = $('#form03-birthday').val();
+                    $.ajax({
+                        url:"changeCusInfo.do?id="+id+"&customerGender="+gender+"&customerTel="+tel+"&customerBirthdayStr="+birthdayStr,
+                        type:"GET"
+                    }).then(function (msg) {
+                        alert(msg.msg);
+                        $($('#tb02').find('td').get(2)).text(gender);
+                        $($('#tb02').find('td').get(3)).text(tel);
+                        $($('#tb02').find('td').get(4)).text(birthdayStr);
+                        showList();
+                        $('#form03')[0].reset();
+                        $('#changeCusInfo-dialog').dialog('close');
+                    },function (xhr, status, errorMsg) {
+                        alert(xhr.status+"：修改失败！");
+                    });
+                }
+            },
+            {
+                text:"取消",
+                click:function () {
+                    $('#form03')[0].reset();
+                    $('#changeCusInfo-dialog').dialog('close');
+                }
+            }
+        ]
+    });
+    var buyCardDialog = $('#buyCard-dialog').dialog({
+        autoOpen: false,
+        modal: true,
+        height: 400,
+        width: 550,
+        close:function () {
+            $('#form04')[0].reset();
+            $('#buyCard-dialog').dialog('close');
+        },
+        buttons:[
+            {
+                text:"保存",
+                click:function () {
+                    var id = $('#form04-cardId').val();
+                    var buyCount = $('#form04-count').val();
+                    var buyPrice = $('#form04-price').val();
+                    if (buyCount <= 0 && buyPrice <= 0) {
+                        alert("请输入正确的次数或金额");
+                    } else {
+                        $.ajax({
+                            url: "buyCard.do?id=" + id + "&buyCount=" + buyCount + "&buyPrice=" + buyPrice,
+                            type: "GET"
+                        }).then(function (msg) {
+                            alert(msg.msg);
+                            $('#form04')[0].reset();
+                            $('#buyCard-dialog').dialog('close');
+                            showList();
+                        }, function (xhr, status, errorMsg) {
+                            alert(xhr.status + "：续卡失败");
+                        });
+                    }
+                }
+            },
+            {
+                text:"取消",
+                click:function () {
+                    $('#form04')[0].reset();
+                    $('#buyCard-dialog').dialog('close');
+                }
+            }
+        ]
+    });
 
     var showList = function () {
         var formJson = $('#search-form').form2Json();
@@ -438,6 +593,7 @@
                         "</td><td>" + "<button id='cusInfo-btn' class='btn' type='button' data-info='"+card.id+"'>顾客信息</button>" +
                         "</td><td>" + "<button id='consumeHis-btn' class='btn' type='button' data-info='"+card.id+"'>消费记录</button>" +
                         "</td><td>" + "<button id='consume-btn' class='btn btn-warning' type='button' data-info='"+card.id+"'>消费</button>" +
+                        "</td><td>" + "<button id='buy-btn' class='btn btn-warning' type='button' data-info='"+card.id+"'>续卡</button>" +
                         "</td></tr>"
                     );
                     $('#hidden-customerInfo').append(
@@ -459,3 +615,4 @@
     }
 </script>
 </body>
+</html>
